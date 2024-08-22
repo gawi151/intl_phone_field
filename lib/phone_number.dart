@@ -7,9 +7,9 @@ class NumberTooShortException implements Exception {}
 class InvalidCharactersException implements Exception {}
 
 class PhoneNumber {
-  String countryISOCode;
-  String countryCode;
-  String number;
+  final String countryISOCode;
+  final String countryCode;
+  final String number;
 
   PhoneNumber({
     required this.countryISOCode,
@@ -68,10 +68,9 @@ class PhoneNumber {
     }
 
     if (phoneNumber.startsWith('+')) {
-      return countries
-          .firstWhere((country) => phoneNumber.substring(1).startsWith(country.dialCode + country.regionCode));
+      return countries.firstWhere((country) => phoneNumber.substring(1).startsWith(country.fullCountryCode));
     }
-    return countries.firstWhere((country) => phoneNumber.startsWith(country.dialCode + country.regionCode));
+    return countries.firstWhere((country) => phoneNumber.startsWith(country.fullCountryCode));
   }
 
   @override
