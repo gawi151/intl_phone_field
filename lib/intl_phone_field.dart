@@ -322,17 +322,17 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       _selectedCountry = countries.firstWhere((country) => number.startsWith(country.fullCountryCode),
           orElse: () => _countryList.first);
 
-      // remove country code from the initial number value
-      number = number.replaceFirst(RegExp("^${_selectedCountry.fullCountryCode}"), "");
+      // remove dial code from the initial number value
+      number = number.replaceFirst(RegExp("^${_selectedCountry.dialCode}"), "");
     } else {
       _selectedCountry = _countryList.firstWhere((item) => item.code == (widget.initialCountryCode ?? 'US'),
           orElse: () => _countryList.first);
 
-      // remove country code from the initial number value
+      // remove dial code from the initial number value
       if (number.startsWith('+')) {
-        number = number.replaceFirst(RegExp("^\\+${_selectedCountry.fullCountryCode}"), "");
+        number = number.replaceFirst(RegExp("^\\+${_selectedCountry.dialCode}"), "");
       } else {
-        number = number.replaceFirst(RegExp("^${_selectedCountry.fullCountryCode}"), "");
+        number = number.replaceFirst(RegExp("^${_selectedCountry.dialCode}"), "");
       }
     }
 
@@ -381,6 +381,10 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO(lgawron): for now we are not fully supporting region code
+    // thats why we treat it as a part of the number
+    final maxLength =
+        widget.disableLengthCheck ? null : _selectedCountry.maxLength + _selectedCountry.regionCode.length;
     return TextFormField(
       key: widget.formFieldKey,
       initialValue: (widget.controller == null) ? number : null,
@@ -408,7 +412,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         widget.onSaved?.call(
           PhoneNumber(
             countryISOCode: _selectedCountry.code,
-            countryCode: '+${_selectedCountry.dialCode}${_selectedCountry.regionCode}',
+            countryCode: '+${_selectedCountry.dialCode}',
             number: value!,
           ),
         );
@@ -436,7 +440,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
 
         return validatorMessage;
       },
-      maxLength: widget.disableLengthCheck ? null : _selectedCountry.maxLength,
+      maxLength: maxLength,
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
       enabled: widget.enabled,

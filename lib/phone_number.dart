@@ -7,9 +7,9 @@ class NumberTooShortException implements Exception {}
 class InvalidCharactersException implements Exception {}
 
 class PhoneNumber {
-  String countryISOCode;
-  String countryCode;
-  String number;
+  final String countryISOCode;
+  final String countryCode;
+  final String number;
 
   PhoneNumber({
     required this.countryISOCode,
@@ -25,13 +25,15 @@ class PhoneNumber {
     try {
       Country country = getCountry(completeNumber);
       String number;
+      // TODO(lgawron): for now we are not fully supporting region code
+      // thats why we treat it as a part of the number
       if (completeNumber.startsWith('+')) {
-        number = completeNumber.substring(1 + country.dialCode.length + country.regionCode.length);
+        number = completeNumber.substring(1 + country.dialCode.length);
       } else {
-        number = completeNumber.substring(country.dialCode.length + country.regionCode.length);
+        number = completeNumber.substring(country.dialCode.length);
       }
       return PhoneNumber(
-          countryISOCode: country.code, countryCode: country.dialCode + country.regionCode, number: number);
+          countryISOCode: country.code, countryCode: country.dialCode, number: number);
     } on InvalidCharactersException {
       rethrow;
       // ignore: unused_catch_clause
@@ -42,11 +44,11 @@ class PhoneNumber {
 
   bool isValidNumber() {
     Country country = getCountry(completeNumber);
-    if (number.length < country.minLength) {
+    if (number.length < country.minLength + country.regionCode.length) {
       throw NumberTooShortException();
     }
 
-    if (number.length > country.maxLength) {
+    if (number.length > country.maxLength + country.regionCode.length) {
       throw NumberTooLongException();
     }
     return true;
@@ -68,10 +70,9 @@ class PhoneNumber {
     }
 
     if (phoneNumber.startsWith('+')) {
-      return countries
-          .firstWhere((country) => phoneNumber.substring(1).startsWith(country.dialCode + country.regionCode));
+      return countries.firstWhere((country) => phoneNumber.substring(1).startsWith(country.fullCountryCode));
     }
-    return countries.firstWhere((country) => phoneNumber.startsWith(country.dialCode + country.regionCode));
+    return countries.firstWhere((country) => phoneNumber.startsWith(country.fullCountryCode));
   }
 
   @override
