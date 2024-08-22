@@ -22,7 +22,7 @@ void main() {
     });
 
     test('create a Guernsey number', () {
-      PhoneNumber phoneNumber = PhoneNumber(countryISOCode: "GG", countryCode: "+441481", number: "960194");
+      PhoneNumber phoneNumber = PhoneNumber(countryISOCode: "GG", countryCode: "+44", number: "1481960194");
       String actual = phoneNumber.completeNumber;
       String expected = "+441481960194";
 
@@ -82,8 +82,8 @@ void main() {
     test('create Guernsey PhoneNumber from +441481960194', () {
       PhoneNumber phoneNumber = PhoneNumber.fromCompleteNumber(completeNumber: "+441481960194");
       expect(phoneNumber.countryISOCode, "GG");
-      expect(phoneNumber.countryCode, "441481");
-      expect(phoneNumber.number, "960194");
+      expect(phoneNumber.countryCode, "44");
+      expect(phoneNumber.number, "1481960194");
       expect(phoneNumber.isValidNumber(), true);
     });
 

@@ -41,8 +41,10 @@ void main() {
       countryCode: 'GG',
     ));
 
-    final countryCodeFinder = find.text('+44 1481');
-    final numberFinder = find.text('960194');
+    final countryCodeFinder = find.text('+44');
+    // TODO(lgawron): This test should be updated when phone number formatters are implemented
+    // and region code is separated from the number
+    final numberFinder = find.text('1481960194');
 
     expect(countryCodeFinder, findsOneWidget);
     expect(numberFinder, findsOneWidget);
